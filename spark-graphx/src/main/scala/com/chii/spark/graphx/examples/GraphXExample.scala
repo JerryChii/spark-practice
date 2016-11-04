@@ -1,9 +1,10 @@
-package com.chii.spark.graphx.examples.sampleFromCSDN
+package com.chii.spark.graphx.examples
 
 import org.apache.log4j.{Level, Logger}
-import org.apache.spark.{SparkContext, SparkConf}
+import org.apache.spark.{SparkConf, SparkContext}
 import org.apache.spark.graphx._
 import org.apache.spark.rdd.RDD
+import org.apache.spark.sql.SparkSession
 
 /**
   * Created by jialin5 on 2016/11/2.
@@ -15,9 +16,14 @@ object GraphXExample {
     Logger.getLogger("org.eclipse.jetty.server").setLevel(Level.OFF)
 
     //设置运行环境
-    val conf = new SparkConf().setAppName("SimpleGraphX").setMaster("local")
-    val sc = new SparkContext(conf)
+    val spark = SparkSession
+      .builder
+      .appName(s"${this.getClass.getSimpleName}")
+      .master("local")
+      .getOrCreate()
+    val sc = spark.sparkContext
 
+    /** 图关系可参照resources/example_graph.gif */
     //设置顶点和边，注意顶点和边都是用元组定义的Array
     //顶点的数据类型是VD:(String,Int)
     val vertexArray = Array(
@@ -144,28 +150,6 @@ object GraphXExample {
     }
     println
 
-
-    //***********************************************************************************
-    //***************************  聚合操作    ****************************************
-    //**********************************************************************************
-    /*println("**********************************************************")
-    println("聚合操作")
-    println("**********************************************************")
-    println("找出年纪最大的追求者：")
-    val oldestFollower: VertexRDD[(String, Int)] = userGraph.mapReduceTriplets[(String, Int)](
-      // 将源顶点的属性发送给目标顶点，map过程
-      edge => Iterator((edge.dstId, (edge.srcAttr.name, edge.srcAttr.age))),
-      // 得到最大追求者，reduce过程
-      (a, b) => if (a._2 > b._2) a else b
-    )
-
-    userGraph.vertices.leftJoin(oldestFollower) { (id, user, optOldestFollower) =>
-      optOldestFollower match {
-        case None => s"${user.name} does not have any followers."
-        case Some((name, age)) => s"${name} is the oldest follower of ${user.name}."
-      }
-    }.collect.foreach { case (id, str) => println(str)}
-    println*/
 
     //***********************************************************************************
     //***************************  实用操作    ****************************************

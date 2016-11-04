@@ -1,8 +1,9 @@
-package com.chii.spark.graphx.examples.sampleFromCSDN
+package com.chii.spark.graphx.examples
 
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.graphx.{Edge, Graph, VertexId}
 import org.apache.spark.rdd.RDD
+import org.apache.spark.sql.SparkSession
 import org.apache.spark.{SparkConf, SparkContext}
 
 /**
@@ -10,13 +11,17 @@ import org.apache.spark.{SparkConf, SparkContext}
   */
 object StructuralOperatorsExample {
   def main(args: Array[String]): Unit = {
-    /*//屏蔽日志
+    //屏蔽日志
     Logger.getLogger("org.apache.spark").setLevel(Level.WARN)
     Logger.getLogger("org.eclipse.jetty.server").setLevel(Level.OFF)
 
     //设置运行环境
-    val conf = new SparkConf().setAppName("GraphXStructuralOperatorsExample").setMaster("local")
-    val sc = new SparkContext(conf)
+    val spark = SparkSession
+      .builder
+      .appName(s"${this.getClass.getSimpleName}")
+      .master("local")
+      .getOrCreate()
+    val sc = spark.sparkContext
 
     // Create an RDD for the vertices
     val users: RDD[(VertexId, (String, String))] =
@@ -39,8 +44,7 @@ object StructuralOperatorsExample {
     // Define a default user in case there are relationship with missing user
     val defaultUser = ("John Doe", "Missing")
     // Build the initial Graph
-    val graph = Graph(users, relationships, defaultUser)*/
-    val graph = GraphUtil.getGrahph
+    val graph = Graph(users, relationships, defaultUser)
     // Notice that there is a user 0 (for which we have no information) connected to users
     // 4 (peter) and 5 (franklin).
     println("====================before eliminate====================")

@@ -1,9 +1,10 @@
-package com.chii.spark.graphx.examples.sampleFromCSDN
+package com.chii.spark.graphx.examples
 
 import org.apache.log4j.{Level, Logger}
-import org.apache.spark.{SparkContext, SparkConf}
+import org.apache.spark.{SparkConf, SparkContext}
 import org.apache.spark.graphx._
 import org.apache.spark.rdd.RDD
+import org.apache.spark.sql.SparkSession
 
 /**
   * Created by jialin5 on 2016/11/2.
@@ -15,12 +16,16 @@ object PageRankExample {
     Logger.getLogger("org.eclipse.jetty.server").setLevel(Level.OFF)
 
     //设置运行环境
-    val conf = new SparkConf().setAppName("PageRank").setMaster("local")
-    val sc = new SparkContext(conf)
+    val spark = SparkSession
+      .builder
+      .appName(s"${this.getClass.getSimpleName}")
+      .master("local")
+      .getOrCreate()
+    val sc = spark.sparkContext
 
     //读入数据文件
-    val articles: RDD[String] = sc.textFile("/Users/jialin5/privatePJ/spark-practice/spark-graphx/src/main/resources/graphx-wiki-vertices.txt")
-    val links: RDD[String] = sc.textFile("/Users/jialin5/privatePJ/spark-practice/spark-graphx/src/main/resources/graphx-wiki-edges.txt")
+    val articles: RDD[String] = sc.textFile(this.getClass.getClassLoader.getResource("graphx-wiki-vertices.txt").getPath)
+    val links: RDD[String] = sc.textFile(this.getClass.getClassLoader.getResource("graphx-wiki-edges.txt").getPath)
 
     //装载顶点和边
     val vertices = articles.map { line =>
@@ -61,3 +66,4 @@ object PageRankExample {
     sc.stop()
   }
 }
+

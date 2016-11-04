@@ -1,21 +1,24 @@
-package com.chii.spark.graphx.examples.sampleFromCSDN
+package com.chii.spark.graphx.examples
 
-import org.apache.spark.{SparkConf, SparkContext}
-import org.apache.spark.graphx.util.GraphGenerators
+import org.apache.log4j.{Level, Logger}
 import org.apache.spark.graphx._
 import org.apache.spark.rdd.RDD
-import org.apache.log4j.{Level, Logger}
+import org.apache.spark.sql.SparkSession
 
 /**
   * Created by jialin5 on 2016/11/3.
-  */
-object AggregationTest {
+*/
+object AggregationExample {
   def main(args: Array[String]): Unit = {
     Logger.getLogger("org.apache.spark").setLevel(Level.WARN)
     Logger.getLogger("org.eclipse.jetty.server").setLevel(Level.OFF)
 
-    val conf = new SparkConf().setAppName("AggregationTest").setMaster("local")
-    val sc = new SparkContext(conf)
+    val spark = SparkSession
+      .builder
+      .appName(s"${this.getClass.getSimpleName}")
+      .master("local")
+      .getOrCreate()
+    val sc = spark.sparkContext
 
     // $example on$
     // Create a graph with "age" as the vertex property.
@@ -28,8 +31,7 @@ object AggregationTest {
 //    println("=========edge=========")
 //    graph.edges.collect.foreach(println(_))
 
-
-
+    /** 图关系可参照resources/example_graph.gif */
     val vertexArray = Array(
       (1L, ("Alice", 28)),
       (2L, ("Bob", 27)),
